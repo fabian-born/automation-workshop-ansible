@@ -1,0 +1,22 @@
+trident:
+  version: 20.07.0
+  svm_name: 
+  svm_username: trident
+  svm_ip: 
+  svm_dataip: 
+
+vm:
+  vcenter_hostname: cni-vcsa-01.cni.fabianborn.net
+  vcenter_username: Administrator@cni.fabianborn.net
+  vcenter_password: testmich
+  vcenter_validate_certs: no
+  vmware_datacenter: cni
+
+netapp:
+    hostname: 192.168.69.50
+    username: admin
+    password: netapp123
+
+aiqum_ip: "10.65.56.167"
+aiqum_username: "admin"
+aiqum_password: "Netapp01!"

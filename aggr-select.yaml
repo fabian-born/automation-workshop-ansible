@@ -1,0 +1,10 @@
+---
+- hosts: localhost
+  collections:
+    - netapp.um_info
+  gather_facts: false
+  vars_files:
+    - ./vars/global.yaml
+  roles:
+    - aggr_select
+

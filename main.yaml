@@ -1,0 +1,66 @@
+################################################################################
+#
+# Title:        main.yaml
+# Author:       Fabian Born
+# Date:         2020-12
+# Description:  
+#
+# Disclaimer:   As Author of this script I'm not responsive
+#               for any issue in your enviornment.
+#
+#               Be careful!
+################################################################################
+
+- hosts: localhost
+  gather_facts: false
+  vars:
+    input: &input
+      hostname:       "{{ netapp.hostname }}"
+      username:       "{{ netapp.username }}"
+      password:       "{{ netapp.password }}"
+      https:          true
+      validate_certs: false
+      use_rest:       "Always"
+  vars_files:
+    - ./vars/global.yaml
+  collections:
+    - netapp.ontap
+
+  tasks:
+  - name: Get ONTAP Info
+    na_ontap_info:
+      state: info
+      gather_subset:
+        - cluster_identity_info
+        - net_interface_info
+        - cluster_image_info
+        - cluster_node_info
+        - aggregate_info
+        - net_port_info
+      <<: *input
+    register: netapp
+
+  - name: Print cluster details
+    debug:
+      msg:
+        - "Name:      {{ netapp.ontap_info.cluster_identity_info.keys() | list | first }}"
+        - "IP:        {{ netapp.ontap_info.net_interface_info.cluster_mgmt.address }}"
+        - "Version:   {{ netapp.ontap_info.cluster_image_info.keys() | list | first }}"
+  - name: Print node details
+    debug:
+      msg:
+        - "Name:      {{ netapp.ontap_info.cluster_node_info[item].node_name }}"
+    with_items:
+      "{{ netapp.ontap_info.cluster_node_info }}"
+    
+  - name: Print aggregate details
+    debug:
+      msg:
+        - "Name:      {{ netapp.ontap_info.aggregate_info[item].aggregate_name }}"
+        - "Node:      {{ netapp.ontap_info.aggregate_info[item].nodes.node_name }}"
+        - "Size:      {{ netapp.ontap_info.aggregate_info[item].aggr_space_attributes.size_total }}"
+        - "Used:      {{ netapp.ontap_info.aggregate_info[item].aggr_space_attributes.size_used }}"
+    with_items:
+      "{{ netapp.ontap_info.aggregate_info }}"
+    when:
+      netapp.ontap_info.aggregate_info[item].aggr_raid_attributes.is_root_aggregate == "false"
