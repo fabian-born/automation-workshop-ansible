@@ -1,0 +1,8 @@
+---
+- hosts: localhost
+  collections:
+    - netapp.um_info
+  gather_facts: false
+  roles:
+    - cluster_info
+
