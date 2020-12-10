@@ -1,1 +1,1 @@
-# automation-workshop-ansible
+# Automation Workshop with Ansible
